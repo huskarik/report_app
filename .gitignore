@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Flask / instance folder
+instance/
+*.db
+*.sqlite3
+
+# PyCharm / VSCode
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Temp / uploads
+app/temp/
+tmp/
