@@ -11,13 +11,19 @@ import sys
 
 logger = setup_logger(__name__)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Путь до .env
-if not os.path.exists(".env"):
-    print("Ошибка: файл .env не найден! Скопируйте .env.example в .env и заполните значения.")
+# Окружение для локального запуска
+dotenv_path = os.path.join(BASE_DIR, "..", ".env")
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
+# Окружение для прода
+required_envs = ["SECRET_FOR_FORM", "TOKEN_MS", "VALID_USERNAME", "VALID_PASSWORD"]
+missing = [var for var in required_envs if not os.environ.get(var)]
+if missing:
+    print(f"Ошибка: отсутствуют переменные окружения: {missing}")
     sys.exit(1)
-
-load_dotenv(".env")
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_FOR_FORM")
