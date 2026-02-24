@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма с периодом</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Выбор периода</h2>
+
+        <!-- Блок для flash-сообщений -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            <span class="close-btn" onclick="this.parentElement.remove()">&times;</span>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Форма -->
+        <form method="POST" action="{{ url_for('generate_report') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.projects.label }}
+                {{ form.projects(class="form-control" + (" field-error" if form.projects.errors else "")) }}
+                {% if form.projects.errors %}
+                    <div class="error-message">
+                        {% for error in form.projects.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="date-group">
+                <div class="form-group">
+                    {{ form.date_from.label }}
+                    {{ form.date_from(class="form-control" + (" field-error" if form.date_from.errors else "")) }}
+                    {% if form.date_from.errors %}
+                        <div class="error-message">
+                            {% for error in form.date_from.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.date_to.label }}
+                    {{ form.date_to(class="form-control" + (" field-error" if form.date_to.errors else "")) }}
+                    {% if form.date_to.errors %}
+                        <div class="error-message">
+                            {% for error in form.date_to.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form.submit(class="submit-btn") }}
+            </div>
+        </form>
+
+        <!-- Блок для ссылки -->
+        {% if generated_link %}
+        <div class="link-container" id="linkContainer">
+            <div class="link-header">
+                <h3>✅ Отчет готов к скачиванию!</h3>
+            </div>
+
+            {% if selected_project %}
+            <div class="project-info">
+                <strong>Проект:</strong> {{ selected_project }}
+            </div>
+            {% endif %}
+
+            <div class="link-box" id="generatedLink">
+                {{ generated_link }}
+            </div>
+
+            {% if form.date_from.data and form.date_to.data %}
+            <div class="period-info">
+                <strong>Период:</strong> с {{ form.date_from.data.strftime('%d.%m.%Y') }} по {{ form.date_to.data.strftime('%d.%m.%Y') }}
+            </div>
+            {% endif %}
+
+            <div class="link-actions">
+                <button class="copy-btn" onclick="copyToClipboard()" id="copyBtn">
+                    📋 Копировать ссылку
+                </button>
+                <a href="{{ generated_link }}" class="download-button" target="_blank">
+                    📥 Скачать файл
+                </a>
+            </div>
+
+            <p style="color: #dc3545; font-size: 12px; margin-top: 10px; text-align: center;">
+                ⚠️ Файл будет удален с сервера сразу после скачивания
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const linkText = document.getElementById('generatedLink').innerText;
+            navigator.clipboard.writeText(linkText).then(function() {
+                const copyBtn = document.getElementById('copyBtn');
+                copyBtn.classList.add('copied');
+                copyBtn.innerText = '✅ Скопировано!';
+
+                setTimeout(function() {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.innerText = '📋 Копировать ссылку';
+                }, 2000);
+            }).catch(function(err) {
+                alert('Не удалось скопировать ссылку');
+            });
+        }
+
+        // Авто-скрытие сообщений через 5 секунд
+        setTimeout(function() {
+            document.querySelectorAll('.flash-message').forEach(function(msg) {
+                msg.style.opacity = '0';
+                setTimeout(function() {
+                    msg.remove();
+                }, 500);
+            });
+        }, 5000);
+
+        // Скролл к ссылке
+        {% if generated_link %}
+        window.onload = function() {
+            document.getElementById('linkContainer').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+        {% endif %}
+    </script>
+</body>
+</html>
