@@ -182,7 +182,7 @@ def download_report(filename):
     return send_file(
         filepath,
         as_attachment=True,  # Принудительное скачивание
-        download_name=filepath,  # Имя для скачивания
+        download_name=filename,  # Имя для скачивания
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
