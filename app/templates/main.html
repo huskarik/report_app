@@ -95,9 +95,6 @@
             {% endif %}
 
             <div class="link-actions">
-                <button class="copy-btn" onclick="copyToClipboard()" id="copyBtn">
-                    📋 Копировать ссылку
-                </button>
                 <a href="{{ generated_link }}" class="download-button" target="_blank">
                     📥 Скачать файл
                 </a>
@@ -111,21 +108,6 @@
     </div>
 
     <script>
-        function copyToClipboard() {
-            const linkText = document.getElementById('generatedLink').innerText;
-            navigator.clipboard.writeText(linkText).then(function() {
-                const copyBtn = document.getElementById('copyBtn');
-                copyBtn.classList.add('copied');
-                copyBtn.innerText = '✅ Скопировано!';
-
-                setTimeout(function() {
-                    copyBtn.classList.remove('copied');
-                    copyBtn.innerText = '📋 Копировать ссылку';
-                }, 2000);
-            }).catch(function(err) {
-                alert('Не удалось скопировать ссылку');
-            });
-        }
 
         // Авто-скрытие сообщений через 5 секунд
         setTimeout(function() {
