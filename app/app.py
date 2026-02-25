@@ -19,7 +19,7 @@ if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
 # Окружение для прода
-required_envs = ["SECRET_FOR_FORM", "TOKEN_MS", "VALID_USERNAME", "VALID_PASSWORD"]
+required_envs = ["SECRET_FOR_FORM", "TOKEN_MS", "VALID_USERNAME", "VALID_PASSWORD", "BASE_URL"]
 missing = [var for var in required_envs if not os.environ.get(var)]
 if missing:
     print(f"Ошибка: отсутствуют переменные окружения: {missing}")
@@ -128,14 +128,14 @@ def generate_report():
                     break
 
             # ФОРМИРУЕМ ССЫЛКУ
-            base_url = "http://127.0.0.1:5000/download_report"
+            base_url = os.environ.get("BASE_URL")
 
             rg = ReportGenerator(token=token_ms)
             rg.set_urls(project=project_href, from_date=str(date_from), to_date=str(date_to))
 
             file_name = rg.generate_report(project=selected_project_name)
 
-            generated_link = f"{base_url}/{file_name}"
+            generated_link = f"{base_url}/download_report/{file_name}"
 
             logger.info(f"Сгенерирована ссылка: {generated_link}")
             logger.info(f"Выбран проект: {selected_project_name}")
